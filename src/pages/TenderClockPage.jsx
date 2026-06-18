@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import '../tender-clock.css'
-
-const API = import.meta.env.VITE_API_BASE || 'http://localhost:3002'
+import { getTenderClock } from '../api.js'
 
 const Ic = {
   warn:   <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>,
@@ -116,10 +115,9 @@ export default function TenderClockPage() {
   const [page, setPage]       = useState(1)
 
   useEffect(() => {
-    fetch(`${API}/api/tender-clock`)
-      .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
+    getTenderClock()
       .then(d => setRaw(adaptApiResponse(d)))
-      .catch(e => setError(e.error || e.message || 'Failed to load'))
+      .catch(e => setError(e.message || 'Failed to load'))
   }, [])
 
   const data = raw

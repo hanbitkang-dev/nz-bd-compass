@@ -1,25 +1,8 @@
 // InLicensingTracks.jsx — NZ BD Compass · /in-licensing
 // Classifies the 523 AU-funded gaps into three in-licensing tracks by data
 // availability and commercial profile. Calls pharmac-tracker API.
-import { useState, useEffect } from 'react'
 import '../in-licensing-tracks.css'
-
-const API = import.meta.env.VITE_API_BASE || 'http://localhost:3002'
-
-function useEndpoint(url) {
-  const [s, setS] = useState({ loading: true, error: false, data: null })
-  const [nonce, setNonce] = useState(0)
-  useEffect(() => {
-    let alive = true
-    setS({ loading: true, error: false, data: null })
-    fetch(url)
-      .then(r => { if (!r.ok) throw new Error(r.status); return r.json() })
-      .then(d => { if (alive) setS({ loading: false, error: false, data: d }) })
-      .catch(() => { if (alive) setS({ loading: false, error: true, data: null }) })
-    return () => { alive = false }
-  }, [url, nonce])
-  return [s, () => setNonce(n => n + 1)]
-}
+import { useEndpoint, API_BASE } from '../api.js'
 
 const TRACK_META = {
   A: {
@@ -102,7 +85,7 @@ function TrackCard({ id, track }) {
 }
 
 export default function InLicensingTracks() {
-  const [{ loading, error, data }, retry] = useEndpoint(`${API}/api/cross-ref/tracks`)
+  const [{ loading, error, data }, retry] = useEndpoint(`${API_BASE}/api/cross-ref/tracks`)
 
   const e1 = data?.engine1 || {}
   const total = data?.total ?? 0

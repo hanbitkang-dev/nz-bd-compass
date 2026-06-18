@@ -1,6 +1,5 @@
 import { useState } from 'react';
-
-const API = import.meta.env.VITE_API_BASE || 'http://localhost:3002';
+import { getTenderClock, API_BASE } from '../api.js';
 
 function ApiProbe() {
   const [state, setState] = useState('idle');
@@ -10,8 +9,7 @@ function ApiProbe() {
   function runProbe() {
     setState('loading');
     setErr(null);
-    fetch(`${API}/api/tender-clock`)
-      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+    getTenderClock()
       .then(d => {
         setInfo({
           total:       d.meta?.filtered ?? d.targets?.length,
@@ -29,7 +27,7 @@ function ApiProbe() {
       <h2 className="probe-title">API connectivity check</h2>
       <p className="probe-endpoint">
         <span className="probe-label">Endpoint</span>
-        <code>{API}/api/tender-clock</code>
+        <code>{API_BASE}/api/tender-clock</code>
       </p>
       <button className="probe-btn" onClick={runProbe} disabled={state === 'loading'}>
         {state === 'loading' ? 'Calling…' : 'Run probe'}

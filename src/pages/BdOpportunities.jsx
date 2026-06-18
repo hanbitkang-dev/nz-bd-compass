@@ -4,8 +4,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import '../bd-opportunities.css'
 import BdDetailPanel from './BdDetailPanel'
-
-const API = import.meta.env.VITE_API_BASE || 'http://localhost:3002'
+import { useEndpoint, API_BASE } from '../api.js'
 
 const PAGE = 9
 
@@ -44,21 +43,6 @@ const AU_CLS = {
 }
 const prettySector = s => (s || '').replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
 const revFmt = v => (v == null ? null : `$${Number(v).toFixed(2).replace(/\.?0+$/, '')}B`)
-
-function useEndpoint(url) {
-  const [s, setS] = useState({ loading: true, error: false, data: null })
-  const [nonce, setNonce] = useState(0)
-  useEffect(() => {
-    let alive = true
-    setS({ loading: true, error: false, data: null })
-    fetch(url)
-      .then(r => { if (!r.ok) throw new Error(r.status); return r.json() })
-      .then(d => { if (alive) setS({ loading: false, error: false, data: d }) })
-      .catch(() => { if (alive) setS({ loading: false, error: true, data: null }) })
-    return () => { alive = false }
-  }, [url, nonce])
-  return [s, () => setNonce(n => n + 1)]
-}
 
 function OppCard({ g, onOpen }) {
   const p = g.pharma_intel || {}
@@ -172,7 +156,7 @@ export default function BdOpportunities({ onNavigate }) {
     setTimeout(() => setSel(null), 320)
   }, [])
 
-  const url = `${API}/api/cross-ref/gap-enriched?matched=true&sort=${sortKey}${ofiOnly ? '&ofi=true' : ''}`
+  const url = `${API_BASE}/api/cross-ref/gap-enriched?matched=true&sort=${sortKey}${ofiOnly ? '&ofi=true' : ''}`
   const [{ loading, error, data }, retry] = useEndpoint(url)
 
   useEffect(() => { setVisible(PAGE) }, [ofiOnly, riskOnly, sortKey])

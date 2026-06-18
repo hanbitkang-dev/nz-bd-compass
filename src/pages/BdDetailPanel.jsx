@@ -3,8 +3,7 @@
 // /api/cross-ref/drug/:chemical for the BD breakdown from pharmac-tracker API.
 import { useState, useEffect } from 'react'
 import '../bd-detail-panel.css'
-
-const API = import.meta.env.VITE_API_BASE || 'http://localhost:3002'
+import { getDrugDetail } from '../api.js'
 
 const I = {
   close:  (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18M6 6l12 12" /></svg>),
@@ -108,8 +107,7 @@ export default function BdDetailPanel({ gap, open, onClose, onSearch, onMethodol
     let alive = true
     setDrugDetail(null)
     setDetailLoading(true)
-    fetch(`${API}/api/cross-ref/drug/${encodeURIComponent(gap.name)}`)
-      .then(r => r.ok ? r.json() : null)
+    getDrugDetail(gap.name)
       .then(d => { if (alive) { setDrugDetail(d); setDetailLoading(false) } })
       .catch(() => { if (alive) setDetailLoading(false) })
     return () => { alive = false }
