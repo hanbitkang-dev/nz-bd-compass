@@ -1,0 +1,105 @@
+/* analytics.css — Analytics page: hero, chart cards, skeletons, snapshot
+   cards, freshness footer. Inherits all design tokens from the app shell. */
+
+/* Page hero */
+.an-hero-inner { padding: 50px 0 54px; }
+.an-hero h1 {
+  font-size: 52px; font-weight: 800; letter-spacing: -0.035em; line-height: 1.06;
+  color: var(--text); margin: 0; text-wrap: balance; max-width: 760px;
+}
+.an-hero h1 .accent { color: var(--accent); }
+.an-hero .an-sub {
+  font-size: clamp(17px, 2.1vw, 21px); line-height: 1.5; color: var(--text-dim);
+  margin: 20px 0 0; font-weight: 500; max-width: 640px; text-wrap: pretty;
+}
+.an-hero .an-live {
+  display: inline-flex; align-items: center; gap: 9px; margin-top: 26px;
+  font-family: var(--mono); font-size: 12.5px; font-weight: 600; color: var(--text-dim);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+  padding: 7px 15px 7px 13px; box-shadow: var(--shadow-card);
+}
+.an-hero .an-live .dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+  box-shadow: 0 0 0 3px var(--green-soft);
+}
+
+/* Section scaffold */
+.an-section { padding: 60px 0; }
+.an-section + .an-section { border-top: 1px solid var(--border); }
+.an-sec-head { max-width: 720px; margin: 0 0 26px; }
+.an-sec-head .an-eyebrow {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .16em;
+  color: var(--accent); margin-bottom: 12px;
+}
+.an-sec-head h2 {
+  font-size: 27px; font-weight: 800; letter-spacing: -0.025em; color: var(--text);
+  margin: 0; line-height: 1.15; text-wrap: balance;
+}
+.an-sec-head p {
+  font-size: 15px; line-height: 1.65; color: var(--text-dim); margin: 12px 0 0;
+  text-wrap: pretty;
+}
+
+/* Chart card */
+.an-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow-card); overflow: hidden;
+}
+.an-card-head {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 18px 22px; border-bottom: 1px solid var(--border);
+}
+.an-card-title { font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+.an-card-hint {
+  font-size: 12px; color: var(--text-mute); display: inline-flex; align-items: center; gap: 6px;
+}
+.an-card-hint svg { width: 13px; height: 13px; }
+.an-counter {
+  margin-left: auto; display: inline-flex; align-items: baseline; gap: 7px;
+  font-family: var(--mono); white-space: nowrap;
+}
+.an-counter b { font-size: 22px; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; }
+.an-counter span { font-size: 11.5px; font-weight: 600; color: var(--text-mute); text-transform: uppercase; letter-spacing: .08em; }
+.an-card-body { padding: 20px 18px 16px; }
+
+/* Skeleton loading */
+.an-skel { position: relative; overflow: hidden; background: var(--surface-2); border-radius: 8px; }
+.an-skel::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--surface) 60%, transparent), transparent);
+  transform: translateX(-100%); animation: anShimmer 1.3s infinite;
+}
+@keyframes anShimmer { 100% { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) { .an-skel::after { animation: none; } }
+.an-skel-chart { height: 320px; }
+.an-skel-bars { display: flex; flex-direction: column; gap: 12px; padding: 6px 0; }
+.an-skel-bar { height: 22px; }
+.an-skel-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.an-skel-card { height: 150px; }
+
+/* Error state */
+.an-error {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; gap: 10px; min-height: 240px; padding: 40px 24px; color: var(--text-mute);
+}
+.an-error .er-icon { width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center; background: var(--red-soft); color: var(--red); }
+.an-error .er-icon svg { width: 22px; height: 22px; }
+.an-error .er-title { font-size: 15px; font-weight: 700; color: var(--text-dim); }
+.an-error .er-sub { font-size: 13px; color: var(--text-mute); max-width: 320px; line-height: 1.5; }
+.an-error .er-retry {
+  margin-top: 6px; height: 36px; padding: 0 18px; border-radius: 9px; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--border-strong); color: var(--text);
+  font-family: inherit; font-size: 13px; font-weight: 600; transition: border-color .14s;
+}
+.an-error .er-retry:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Eyebrow used standalone (inside .bdo-head-text, outside .an-sec-head) */
+.an-eyebrow {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .16em;
+  color: var(--accent); margin-bottom: 12px;
+}
+
+@media (max-width: 560px) {
+  .an-section { padding: 44px 0; }
+  .an-sec-head h2 { font-size: 22px; }
+}

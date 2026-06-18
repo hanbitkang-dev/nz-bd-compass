@@ -1,0 +1,189 @@
+/* bd-opportunities.css — BD Opportunities section for the Analytics page.
+   Sits first in the body (below the hero). Inherits every design token from
+   the app shell (accent, dark mode, density, shadows, radius). No new colors. */
+
+/* ── Section header (text left · controls right) ─────────────────── */
+.bdo-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 28px; flex-wrap: wrap; margin-bottom: 22px;
+}
+.bdo-head-text { max-width: 560px; }
+.bdo-head-text .an-eyebrow { color: var(--accent); margin: 0 0 11px; }
+.bdo-pill {
+  display: inline-block; font-family: var(--mono); font-size: 12px; font-weight: 700;
+  color: var(--amber); background: var(--amber-soft); border-radius: 5px; padding: 2px 8px; letter-spacing: -0.01em;
+}
+.bdo-title {
+  font-size: 27px; font-weight: 800; letter-spacing: -0.025em; color: var(--text);
+  margin: 0; line-height: 1.15; text-wrap: balance;
+}
+.bdo-sub { font-size: 15px; line-height: 1.6; color: var(--text-dim); margin: 12px 0 0; text-wrap: pretty; }
+
+/* ── Controls (filters + sort) ───────────────────────────────────── */
+.bdo-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.bdo-filter {
+  display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 13px;
+  border-radius: 9px; border: 1px solid var(--border-strong); background: var(--surface);
+  color: var(--text-dim); font-family: inherit; font-size: 13px; font-weight: 600;
+  cursor: pointer; white-space: nowrap; transition: border-color .14s, color .14s, background .14s;
+}
+.bdo-filter svg { width: 15px; height: 15px; }
+.bdo-filter .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 3px var(--amber-soft); }
+.bdo-filter:hover { border-color: var(--accent); color: var(--text); }
+.bdo-filter.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+
+.bdo-select-wrap { position: relative; display: inline-flex; align-items: center; }
+.bdo-select {
+  appearance: none; -webkit-appearance: none; height: 36px; padding: 0 34px 0 13px;
+  border-radius: 9px; border: 1px solid var(--border-strong); background: var(--surface);
+  color: var(--text); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: border-color .14s;
+}
+.bdo-select:hover { border-color: var(--accent); }
+.bdo-select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.bdo-caret { position: absolute; right: 11px; width: 14px; height: 14px; color: var(--text-mute); pointer-events: none; }
+
+/* ── Count line ──────────────────────────────────────────────────── */
+.bdo-count { font-family: var(--mono); font-size: 12.5px; color: var(--text-mute); margin: 0 0 18px; }
+.bdo-count b { color: var(--text); font-weight: 700; }
+
+/* ── Card grid (ragged heights — Tier 2 cards shrink) ────────────── */
+.bdo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: start; }
+
+/* ── Opportunity card ────────────────────────────────────────────── */
+.bdo-card {
+  display: flex; flex-direction: column; text-align: left; width: 100%;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow-card); cursor: pointer; font-family: inherit; overflow: hidden;
+  transition: border-color .14s, box-shadow .14s, transform .09s;
+}
+.bdo-card:hover { border-color: var(--border-strong); box-shadow: var(--shadow-card-hover); transform: translateY(-2px); }
+.bdo-card:active { transform: translateY(0); }
+.bdo-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.bdo-card-head { padding: 16px 18px 15px; }
+.bdo-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 13px; }
+.bdo-sector {
+  font-size: 11px; font-weight: 600; letter-spacing: .01em; color: var(--accent);
+  background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  border-radius: 20px; padding: 3px 10px; white-space: nowrap;
+}
+
+/* BD score readout + 5-segment bar */
+.bdo-score { display: inline-flex; align-items: center; gap: 7px; }
+.bdo-score-lab { font-family: var(--mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--text-mute); }
+.bdo-score-val { font-family: var(--mono); font-size: 15px; font-weight: 700; letter-spacing: -0.02em; color: var(--bdo-c); }
+.bdo-bar { display: inline-flex; gap: 2px; }
+.bdo-seg { width: 6px; height: 13px; border-radius: 2px; background: var(--border-strong); }
+.bdo-seg.on { background: var(--bdo-c); }
+
+.bdo-chem { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); margin: 0; line-height: 1.2; text-transform: capitalize; }
+.bdo-brand { font-size: 13px; color: var(--text-dim); margin: 5px 0 0; line-height: 1.4; }
+.bdo-brand b { font-weight: 600; color: var(--text); }
+
+/* label / value rows — each block divided by a rule */
+.bdo-rows {
+  border-top: 1px solid var(--border); padding: 13px 18px;
+  display: grid; grid-template-columns: 62px 1fr; gap: 7px 12px; align-items: start;
+}
+.bdo-row-lab { font-family: var(--mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text-mute); padding-top: 1px; }
+.bdo-row-val { font-size: 13.5px; font-weight: 600; color: var(--text); line-height: 1.4; }
+.bdo-row-val.mono { font-family: var(--mono); font-weight: 700; letter-spacing: -0.01em; }
+.bdo-row-sub { display: block; font-size: 12.5px; font-weight: 400; color: var(--text-dim); margin-top: 3px; line-height: 1.4; text-wrap: pretty; }
+
+/* OFI badge footer */
+.bdo-ofi {
+  margin-top: auto; display: flex; align-items: center; gap: 9px; padding: 11px 18px;
+  background: var(--accent-soft); border-top: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+  font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--accent);
+}
+.bdo-ofi .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 3px var(--amber-soft); flex: none; }
+
+/* ── Load more ───────────────────────────────────────────────────── */
+.bdo-more { display: flex; justify-content: center; margin-top: 28px; }
+.bdo-more button {
+  display: inline-flex; align-items: center; gap: 10px; height: 44px; padding: 0 24px;
+  border-radius: 10px; border: 1px solid var(--border-strong); background: var(--surface);
+  color: var(--text); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+  box-shadow: var(--shadow-card); transition: border-color .14s, color .14s;
+}
+.bdo-more button:hover { border-color: var(--accent); color: var(--accent); }
+.bdo-more button .ct { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--text-mute); }
+.bdo-more button:hover .ct { color: var(--accent); }
+
+/* ── Footer (methodology link + data source) ─────────────────────── */
+.bdo-foot {
+  margin-top: 34px; padding-top: 24px; border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+}
+.bdo-method { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 700; color: var(--accent); text-decoration: none; cursor: pointer; }
+.bdo-method svg { width: 15px; height: 15px; transition: transform .14s; }
+.bdo-method:hover svg { transform: translateX(3px); }
+.bdo-source { font-size: 12px; color: var(--text-mute); line-height: 1.55; max-width: 430px; text-align: right; text-wrap: pretty; }
+
+/* ── Skeleton ────────────────────────────────────────────────────── */
+.bdo-skel-card { height: 250px; border-radius: var(--radius); }
+
+/* ── Risk filter button (orange tint, distinct from OFI filter) ──── */
+.bdo-filter.risk:hover { border-color: var(--amber); color: var(--text); }
+.bdo-filter.risk.active { background: var(--amber-soft); border-color: var(--amber); color: var(--amber); }
+.bdo-filter-ic { display: inline-flex; align-items: center; }
+.bdo-filter-ic svg { width: 14px; height: 14px; }
+
+/* ── Risk flags band on card ─────────────────────────────────────── */
+.bdo-risk {
+  border-top: 1px solid var(--border); padding: 11px 18px 13px;
+}
+.bdo-risk-lab {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .08em; color: var(--text-mute);
+  margin-bottom: 8px;
+}
+.bdo-risk-cap { font-weight: 500; opacity: .7; }
+.bdo-flags { display: flex; flex-wrap: wrap; gap: 6px; }
+.bdo-flag {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11.5px; font-weight: 600; padding: 3px 10px; border-radius: 7px;
+  border: 1px solid transparent;
+}
+.bdo-flag.high {
+  background: var(--amber-soft); color: var(--amber);
+  border-color: color-mix(in srgb, var(--amber) 28%, transparent);
+}
+.bdo-flag.med {
+  background: color-mix(in srgb, var(--amber) 8%, transparent); color: var(--text-dim);
+  border-color: var(--border);
+}
+.bdo-flag.low {
+  background: var(--surface-2, var(--surface)); color: var(--text-mute);
+  border-color: var(--border);
+}
+.bdo-flag-ic svg { width: 12px; height: 12px; }
+.bdo-flag-name { font-weight: 600; }
+.bdo-flag-lvl { font-weight: 500; opacity: .75; }
+
+/* ── Risk caveat block (below the grid) ──────────────────────────── */
+.bdo-caveat {
+  display: flex; gap: 12px; align-items: flex-start; margin-top: 20px;
+  padding: 14px 18px; border-radius: 10px;
+  background: color-mix(in srgb, var(--amber) 7%, transparent);
+  border: 1px solid color-mix(in srgb, var(--amber) 22%, transparent);
+}
+.bdo-caveat-ic { flex: none; display: flex; align-items: center; }
+.bdo-caveat-ic svg { width: 16px; height: 16px; color: var(--amber); margin-top: 1px; }
+.bdo-caveat p { font-size: 12.5px; line-height: 1.58; color: var(--text-dim); text-wrap: pretty; }
+.bdo-caveat p b { color: var(--text); font-weight: 700; }
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .bdo-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .bdo-grid { grid-template-columns: 1fr; }
+  .bdo-head { flex-direction: column; align-items: stretch; gap: 18px; }
+  .bdo-title { font-size: 22px; }
+  .bdo-controls { gap: 8px; }
+  .bdo-foot { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .bdo-source { text-align: left; }
+}

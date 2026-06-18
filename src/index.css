@@ -24,6 +24,12 @@
   --shadow-card-hover: 0 4px 6px rgba(15,23,42,0.05), 0 10px 24px rgba(15,23,42,0.10);
   --radius:          12px;
   --mono:            'JetBrains Mono', ui-monospace, Consolas, monospace;
+  --font-mono:       'JetBrains Mono', ui-monospace, Consolas, monospace;
+  --blue:            #2563eb;
+  --blue-soft:       rgba(37,99,235,0.11);
+  --bg-card:         var(--surface);
+  --bg-subtle:       var(--surface-2);
+  --bg-muted:        var(--surface-2);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -292,3 +298,21 @@ body {
   padding: 1px 5px;
   border-radius: 3px;
 }
+
+/* ── Badges (shared with BD components) ──────────────────────── */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11.5px; font-weight: 600; padding: 3px 10px;
+  border-radius: 20px; white-space: nowrap;
+}
+.badge .bdot { width: 6px; height: 6px; border-radius: 50%; }
+.badge.green { color: var(--green);  background: var(--green-soft); }
+.badge.green .bdot  { background: var(--green); }
+.badge.red   { color: var(--red);    background: var(--red-soft); }
+.badge.red .bdot    { background: var(--red); }
+.badge.amber { color: var(--amber);  background: var(--amber-soft); }
+.badge.amber .bdot  { background: var(--amber); }
+.badge.blue  { color: var(--blue);   background: var(--blue-soft); }
+.badge.blue .bdot   { background: var(--blue); }
+.badge.gray  { color: var(--gray);   background: var(--gray-soft); }
+.badge.gray .bdot   { background: var(--gray); }

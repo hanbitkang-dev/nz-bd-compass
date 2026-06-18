@@ -1,0 +1,181 @@
+/* ── In-Licensing Tracks — analytics section ─────────────────────── */
+.ilt-meta-strip {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 28px;
+  padding: 14px 20px;
+  background: var(--bg-subtle, var(--bg-muted));
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.ilt-meta-item {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.ilt-meta-val {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  line-height: 1;
+}
+
+.ilt-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 720px) {
+  .ilt-grid { grid-template-columns: 1fr; }
+  .ilt-skel-grid { grid-template-columns: 1fr; }
+}
+
+.ilt-card {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 20px 18px;
+  background: var(--bg-card);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  transition: border-color .18s;
+}
+
+.ilt-card:hover { border-color: var(--border-strong); }
+
+.ilt-card.a { --ilt-c: var(--accent); }
+.ilt-card.b { --ilt-c: var(--amber); }
+.ilt-card.c { --ilt-c: var(--gray); }
+
+.ilt-track-id {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ilt-c);
+  margin-bottom: 4px;
+}
+
+.ilt-name {
+  font-size: 15px;
+  font-weight: 650;
+  color: var(--text);
+  line-height: 1.35;
+  margin-bottom: 14px;
+}
+
+.ilt-count {
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--ilt-c);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.ilt-count-sub {
+  font-size: 12px;
+  color: var(--text-mute);
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.ilt-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 14px;
+}
+
+.ilt-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.ilt-chip {
+  font-size: 11px;
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-weight: 600;
+  line-height: 1.8;
+}
+
+.ilt-chip.scored {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+}
+
+.ilt-chip.unscored {
+  background: color-mix(in srgb, var(--gray) 15%, transparent);
+  color: var(--gray);
+}
+
+.ilt-chip.risk {
+  background: color-mix(in srgb, var(--amber) 16%, transparent);
+  color: var(--amber);
+}
+
+.ilt-signals {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 14px;
+}
+
+.ilt-signal-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--text-dim);
+}
+
+.ilt-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--ilt-c);
+}
+
+.ilt-dot.off { background: var(--border-strong); }
+
+.ilt-note {
+  font-size: 12px;
+  color: var(--text-mute);
+  line-height: 1.55;
+  padding: 10px 12px;
+  background: var(--bg-subtle, var(--bg-muted));
+  border-radius: 8px;
+  margin-top: auto;
+}
+
+.ilt-note.warn { border-left: 3px solid var(--amber); }
+
+.ilt-caveats {
+  margin-top: 20px;
+  padding: 13px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--text-mute);
+  line-height: 1.65;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ilt-skel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
