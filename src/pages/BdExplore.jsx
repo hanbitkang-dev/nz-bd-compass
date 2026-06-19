@@ -147,7 +147,7 @@ function RiskCell({ d }) {
     setPos({ left, top, place })
   }, [])
   const hide = useCallback(() => setPos(null), [])
-  if (!lvl) return <span className="exp-dash">-</span>
+  if (!lvl) return <span className="exp-dash">—</span>
   const pop = pos && createPortal(
     <span className={'exp-risk-pop ' + pos.place} style={{ left: pos.left + 'px', top: pos.top + 'px' }}
       onMouseEnter={show} onMouseLeave={hide}>
@@ -196,12 +196,12 @@ const COLS = [
     },
     csv: (d) => d.bdScore },
   { key: 'revenue', label: 'Revenue', num: true, def: true,
-    val: (d) => (d.revenueUsdB == null ? -1 : d.revenueUsdB),
-    cell: (d) => <span className="exp-num">{d.revenueUsdB == null ? <span className="exp-dash">-</span> : '$' + d.revenueUsdB.toFixed(1) + 'B'}</span>,
+    val: (d) => (d.revenueUsdB == null ? null : d.revenueUsdB),   // null -> pinned bottom by the sort comparator
+    cell: (d) => <span className="exp-num">{d.revenueUsdB == null ? <span className="exp-dash">—</span> : '$' + d.revenueUsdB.toFixed(1) + 'B'}</span>,
     csv: (d) => (d.revenueUsdB == null ? '' : d.revenueUsdB) },
   { key: 'patent_expiry', label: 'Patent', num: true, def: true,
-    val: (d) => (d.patentYear == null ? -1 : d.patentYear),
-    cell: (d) => <span className="exp-num">{d.patentExpiry ? d.patentExpiry : <span className="exp-dash">-</span>}</span>,
+    val: (d) => (d.patentYear == null ? null : d.patentYear),
+    cell: (d) => <span className="exp-num">{d.patentExpiry ? d.patentExpiry : <span className="exp-dash">—</span>}</span>,
     csv: (d) => d.patentExpiry },
   { key: 'au_restriction', label: 'AU restriction', def: true,
     val: (d) => d.au_restriction,
@@ -220,8 +220,8 @@ const COLS = [
     cell: (d) => <span className="exp-tag exp-muted">{d.atc_l4 || '-'}</span>,
     csv: (d) => d.atc_l4 },
   { key: 'class_funded_count', label: 'Class funded (NZ)', num: true, def: false,
-    val: (d) => (d.class_funded_count == null ? -1 : d.class_funded_count),
-    cell: (d) => <span className="exp-num">{d.class_funded_count == null ? <span className="exp-dash">-</span> : d.class_funded_count}</span>,
+    val: (d) => (d.class_funded_count == null ? null : d.class_funded_count),
+    cell: (d) => <span className="exp-num">{d.class_funded_count == null ? <span className="exp-dash">—</span> : d.class_funded_count}</span>,
     csv: (d) => (d.class_funded_count == null ? '' : d.class_funded_count) },
   { key: 'ofiPending', label: 'OFI', def: true,
     val: (d) => (d.ofiPending ? 1 : 0),
@@ -335,6 +335,10 @@ export default function BdExplore({ onOpenDetail }) {
     const dir = sort.dir === 'asc' ? 1 : -1
     list = [...list].sort((a, b) => {
       const va = col.val(a), vb = col.val(b)
+      // Missing values (e.g. Track C has no global revenue/patent) are pinned to
+      // the BOTTOM regardless of sort direction - they are "no data", not "lowest".
+      const na = va == null, nb = vb == null
+      if (na || nb) return na && nb ? 0 : na ? 1 : -1
       if (va < vb) return -1 * dir; if (va > vb) return 1 * dir; return 0
     })
     return list

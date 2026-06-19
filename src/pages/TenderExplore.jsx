@@ -31,8 +31,22 @@ const I = {
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 function fmtDate(iso) { if (!iso) return '-'; const [y, m] = iso.split('-'); return MONTHS[+m - 1] + ' ' + y }
 const DIFF = { small_molecule_generic: { cls: 'simple', label: 'Small-molecule generic' }, complex: { cls: 'complex', label: 'Complex formulation' } }
-const HOLD = { competitor: 'Competitor-held', opaque: 'Opaque - unmapped', local: 'Local incumbent', estimated: 'Estimated - backfill pending' }
+// hold_status mirrors tenderClock.js classifyHold(). 'estimated' is the transient
+// state emitted ONLY while the WS1 supplier map is still loading (backfill) - not a
+// real classification; surfaced honestly rather than silently absorbed.
+const HOLD = { competitor: 'Competitor-held', opaque: 'Opaque - unmapped', local: 'Local incumbent', estimated: 'Estimated - supplier map loading' }
 const diffOf = (k) => DIFF[k] || { cls: 'simple', label: k || '-' }
+
+// Cohort = exclusivity-end year. 2028 has enough runway to start a new dossier;
+// 2027 is defend-only (~5mo); 2026 has already expired or is imminent (effectively
+// closed per the PHARMAC caveat). Any future year with no interpretation falls back
+// to "review pending" so an unmodelled cohort is labelled, never silently shown.
+const COHORT_MODE = {
+  '2028': { mode: 'start',  word: 'start now' },
+  '2027': { mode: 'defend', word: 'defend only' },
+  '2026': { mode: 'closed', word: 'closing / closed' },
+}
+const cohortMeaning = (y) => COHORT_MODE[y] || { mode: 'review', word: 'review pending' }
 
 /* -- live data -> table shape: add cohort (real API has no cohort field) -- */
 function adaptTargets(raw) {
@@ -72,7 +86,7 @@ const COLS = [
     val: (t) => t.tg1, cell: (t) => <span className="exp-tag">{t.tg1}</span>, csv: (t) => t.tg1 },
   { key: 'cohort', label: 'Cohort', def: true,
     val: (t) => +t.cohort,
-    cell: (t) => { const start = t.cohort === '2028'; return <span className={'exp-cohort ' + (start ? 'start' : 'defend')}>{start ? I.bolt : I.shield}{t.cohort}</span> },
+    cell: (t) => { const m = cohortMeaning(t.cohort); const start = m.mode === 'start'; return <span className={'exp-cohort ' + (start ? 'start' : 'defend')} title={`${t.cohort} - ${m.word}`}>{start ? I.bolt : I.shield}{t.cohort}</span> },
     csv: (t) => t.cohort },
   { key: 'exclusivity_end', label: 'Expiry', def: true,
     val: (t) => t.exclusivity_end, cell: (t) => <span className="exp-num" style={{ fontWeight: 700 }}>{fmtDate(t.exclusivity_end)}</span>, csv: (t) => t.exclusivity_end },
@@ -134,7 +148,8 @@ function TenderDetail({ t, open, onClose }) {
     return () => { window.removeEventListener('keydown', onKey); html.style.overflow = prev }
   }, [open, onClose])
   if (!t) return null
-  const start = t.cohort === '2028'
+  const m = cohortMeaning(t.cohort)
+  const start = m.mode === 'start'
   const diff = diffOf(t.mfr_difficulty)
   const runwayPct = Math.max(6, Math.min(100, (t.lead_months / 18) * 100))
   return (
@@ -148,7 +163,7 @@ function TenderDetail({ t, open, onClose }) {
           <p className="exp-drawer-supplier">
             {t.hold_status === 'opaque' ? <span style={{ color: 'var(--text-mute)', fontStyle: 'italic' }}>Supplier unmapped - not in WS1</span> : t.supplier ? <>Held by <b>{t.supplier}</b></> : <span style={{ color: 'var(--text-mute)', fontStyle: 'italic' }}>Supplier unconfirmed</span>}
           </p>
-          <span className={'exp-drawer-cohort ' + (start ? 'start' : 'defend')}>{start ? I.bolt : I.shield}{start ? 'Start BD now' : 'Defend only'} - {t.cohort} cohort</span>
+          <span className={'exp-drawer-cohort ' + (start ? 'start' : 'defend')}>{start ? I.bolt : I.shield}{start ? 'Start BD now' : m.mode === 'closed' ? 'Closing / closed' : m.mode === 'review' ? 'Review pending' : 'Defend only'} - {t.cohort} cohort</span>
         </div>
         <div className="exp-drawer-body">
           <div className="exp-drawer-sec">
@@ -208,7 +223,7 @@ export default function TenderExplore() {
   }, [targets])
   const cohortOpts = useMemo(() => {
     const c = {}; targets.forEach((t) => c[t.cohort] = (c[t.cohort] || 0) + 1)
-    return Object.keys(c).sort().map((v) => ({ value: v, label: v + (v === '2028' ? ' - start' : ''), n: c[v], sw: v === '2028' ? 'var(--amber)' : 'var(--text-mute)' }))
+    return Object.keys(c).sort().map((v) => { const m = cohortMeaning(v); return { value: v, label: `${v} · ${m.word}`, n: c[v], sw: m.mode === 'start' ? 'var(--amber)' : 'var(--text-mute)' } })
   }, [targets])
 
   const filtered = useMemo(() => {
