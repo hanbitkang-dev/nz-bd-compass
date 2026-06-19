@@ -3,8 +3,8 @@ import '../tender-clock.css'
 import '../explore.css'
 import { getTenderClock } from '../api.js'
 import EngineContext from '../EngineContext.jsx'
-import ModeTabs from './ModeTabs.jsx'
-import Engine2Explore from './Engine2Explore.jsx'
+import EngineModes from './EngineModes.jsx'
+import TenderExplore from './TenderExplore.jsx'
 
 export default function TenderClockPage() {
   const [mode, setMode] = useState('story')
@@ -12,8 +12,8 @@ export default function TenderClockPage() {
     <div className="view-enter">
       <EngineContext which="tender-clock" />
       <div className="content-wrap tc">
-        <ModeTabs mode={mode} setMode={setMode} />
-        {mode === 'explore' && <Engine2Explore />}
+        <EngineModes mode={mode} setMode={setMode} accent="e2" />
+        {mode === 'explore' && <TenderExplore />}
       </div>
       {mode === 'story' && <TenderClockStory />}
     </div>

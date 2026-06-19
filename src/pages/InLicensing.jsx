@@ -1,16 +1,17 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import '../analytics.css'
 import '../compass.css'
 import '../explore.css'
 import BdOpportunities from './BdOpportunities.jsx'
 import InLicensingTracks from './InLicensingTracks.jsx'
-import Engine1Explore from './Engine1Explore.jsx'
-import ModeTabs from './ModeTabs.jsx'
+import BdExplore from './BdExplore.jsx'
+import BdDetailPanel from './BdDetailPanel.jsx'
+import EngineModes from './EngineModes.jsx'
 import EngineContext from '../EngineContext.jsx'
 
 const PHARMAC = 'https://pharmac-tracker.onrender.com'
 
-function handleNavigate({ tab }) {
+function handleNavigate({ tab } = {}) {
   if (tab === 'methodology') {
     window.open(`${PHARMAC}/methodology`, '_blank', 'noopener')
   } else {
@@ -20,6 +21,13 @@ function handleNavigate({ tab }) {
 
 export default function InLicensing() {
   const [mode, setMode] = useState('story')
+
+  // page-level detail panel for Explore mode (Story mode's cards open their own)
+  const [sel, setSel] = useState(null)
+  const [panelOpen, setPanelOpen] = useState(false)
+  const openDetail = useCallback((g) => { setSel(g); setTimeout(() => setPanelOpen(true), 20) }, [])
+  const closeDetail = useCallback(() => { setPanelOpen(false); setTimeout(() => setSel(null), 320) }, [])
+
   return (
     <div className="view-enter">
       <EngineContext which="in-licensing" />
@@ -31,12 +39,12 @@ export default function InLicensing() {
           </h1>
           <p className="cmp-page-sub">
             523 AU-PBS medicines not on the PHARMAC Schedule, BD-scored on global revenue,
-            patent runway, AU access level, and OFI momentum. Sorted into 3 tracks by
-            data availability.
+            patent runway, AU access level, and OFI momentum. Read the curated story, or switch
+            to <b>Explore</b> to slice the full dataset your own way.
           </p>
         </div>
 
-        <ModeTabs mode={mode} setMode={setMode} />
+        <EngineModes mode={mode} setMode={setMode} accent="e1" />
 
         {mode === 'story' ? (
           <>
@@ -44,9 +52,17 @@ export default function InLicensing() {
             <InLicensingTracks />
           </>
         ) : (
-          <Engine1Explore onNavigate={handleNavigate} />
+          <BdExplore onOpenDetail={openDetail} />
         )}
       </div>
+
+      <BdDetailPanel
+        gap={sel}
+        open={panelOpen}
+        onClose={closeDetail}
+        onSearch={() => { closeDetail(); handleNavigate({ tab: 'compare' }) }}
+        onMethodology={() => { closeDetail(); handleNavigate({ tab: 'methodology' }) }}
+      />
     </div>
   )
 }
