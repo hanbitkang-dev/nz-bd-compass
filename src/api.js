@@ -31,6 +31,7 @@ export function useEndpoint(url) {
 
 // One-shot async helpers — use inside useEffect or event handlers.
 export const getTenderClock    = ()           => apiFetch('/api/tender-clock')
+export const getReferencePricing = ()         => apiFetch('/api/cross-ref/reference-pricing')
 export const getCrossRefTracks = ()           => apiFetch('/api/cross-ref/tracks')
 export const getDrugDetail     = (chemical)   => apiFetch(`/api/cross-ref/drug/${encodeURIComponent(chemical)}`)
 export const getGapEnriched    = (params = {}) => {

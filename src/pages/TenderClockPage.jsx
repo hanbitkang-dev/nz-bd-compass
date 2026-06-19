@@ -1,7 +1,24 @@
 import { useState, useEffect, useMemo } from 'react'
 import '../tender-clock.css'
+import '../explore.css'
 import { getTenderClock } from '../api.js'
 import EngineContext from '../EngineContext.jsx'
+import ModeTabs from './ModeTabs.jsx'
+import Engine2Explore from './Engine2Explore.jsx'
+
+export default function TenderClockPage() {
+  const [mode, setMode] = useState('story')
+  return (
+    <div className="view-enter">
+      <EngineContext which="tender-clock" />
+      <div className="content-wrap tc">
+        <ModeTabs mode={mode} setMode={setMode} />
+        {mode === 'explore' && <Engine2Explore />}
+      </div>
+      {mode === 'story' && <TenderClockStory />}
+    </div>
+  )
+}
 
 const Ic = {
   warn:   <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>,
@@ -105,7 +122,7 @@ function YearHeaders() {
   )
 }
 
-export default function TenderClockPage() {
+function TenderClockStory() {
   const [raw, setRaw]         = useState(null)
   const [error, setError]     = useState(null)
   const [cohort, setCohort]   = useState('2028')
@@ -174,8 +191,6 @@ export default function TenderClockPage() {
   const coveInt = parseInt(m.supplier_coverage)
 
   return (
-    <div className="view-enter">
-    <EngineContext which="tender-clock" />
     <div className="content-wrap tc">
 
       {/* ── Intro ── */}
@@ -510,7 +525,6 @@ export default function TenderClockPage() {
           This tool is for commercial planning only; verify directly with PHARMAC before any regulatory or tender submission.
         </p>
       </div>
-    </div>
     </div>
   )
 }

@@ -1,7 +1,11 @@
+import { useState } from 'react'
 import '../analytics.css'
 import '../compass.css'
+import '../explore.css'
 import BdOpportunities from './BdOpportunities.jsx'
 import InLicensingTracks from './InLicensingTracks.jsx'
+import Engine1Explore from './Engine1Explore.jsx'
+import ModeTabs from './ModeTabs.jsx'
 import EngineContext from '../EngineContext.jsx'
 
 const PHARMAC = 'https://pharmac-tracker.onrender.com'
@@ -15,6 +19,7 @@ function handleNavigate({ tab }) {
 }
 
 export default function InLicensing() {
+  const [mode, setMode] = useState('story')
   return (
     <div className="view-enter">
       <EngineContext which="in-licensing" />
@@ -30,8 +35,17 @@ export default function InLicensing() {
             data availability.
           </p>
         </div>
-        <BdOpportunities onNavigate={handleNavigate} />
-        <InLicensingTracks />
+
+        <ModeTabs mode={mode} setMode={setMode} />
+
+        {mode === 'story' ? (
+          <>
+            <BdOpportunities onNavigate={handleNavigate} />
+            <InLicensingTracks />
+          </>
+        ) : (
+          <Engine1Explore onNavigate={handleNavigate} />
+        )}
       </div>
     </div>
   )
