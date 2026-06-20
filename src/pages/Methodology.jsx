@@ -128,6 +128,13 @@ export default function Methodology() {
                   </div>
                   <div className="mth-src-meta"><b>Joined</b>on match</div>
                 </li>
+                <li>
+                  <div>
+                    <div className="mth-src-name">AU PBS Date-of-Supply · <code>dos…_phrmcy_type.csv</code></div>
+                    <div className="mth-src-desc">Raw AU dispensing (scripts + benefit cost) joined by ATC5 — gives Track C local generics a "where the money flows in AU" signal where there's no BD Score. Not scaled to NZ.</div>
+                  </div>
+                  <div className="mth-src-meta"><b>CSV</b>6-mo cut</div>
+                </li>
               </ul>
             </article>
             {/* Engine 2 */}

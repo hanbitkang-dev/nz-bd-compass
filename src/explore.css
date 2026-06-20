@@ -289,6 +289,13 @@ th.sorted .exp-th-arrow { opacity: 1; color: var(--exp-accent); }
 .exp-rp-row .v.mono { font-family: var(--mono); font-weight: 700; color: var(--text); }
 .exp-rp-basis { font-size: 11px; line-height: 1.5; color: var(--text-mute); margin: 8px 0 0; padding-top: 8px; border-top: 1px solid var(--border); text-wrap: pretty; }
 
+/* AU utilization cell (raw, not NZ-scaled) — substance vs class grain */
+.exp-au { display: inline-flex; align-items: center; gap: 7px; justify-content: flex-end; cursor: help; }
+.exp-au-val { font-family: var(--mono); font-weight: 700; color: var(--text); }
+.exp-au-grain { font-family: var(--mono); font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--amber-strong); background: var(--amber-soft); border: 1px solid color-mix(in srgb, var(--amber) 30%, transparent); border-radius: 5px; padding: 1px 5px; white-space: nowrap; }
+.theme-dark .exp-au-grain { color: var(--amber); }
+.exp-au.na { color: var(--text-mute); font-size: 11.5px; font-style: italic; cursor: default; }
+
 /* small status dot pills (ofiPending / hold / difficulty) */
 .exp-dot-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--text-dim); white-space: nowrap; }
 .exp-dot-pill .d { width: 7px; height: 7px; border-radius: 50%; }

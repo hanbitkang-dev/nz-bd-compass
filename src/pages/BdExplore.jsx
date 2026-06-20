@@ -171,6 +171,48 @@ function RiskCell({ d }) {
   )
 }
 
+/* -- AU utilization cell (raw, not NZ-scaled). Hover popover mirrors RiskCell:
+   shows ATC5 grain (substance vs class), scripts, benefit cost + basis. The
+   "why" pattern carries the honesty that a class-level number is a shared sum. -- */
+const auFmt = (c) => c == null ? '—' : c >= 1e6 ? '$' + (c / 1e6).toFixed(1) + 'M' : c >= 1e3 ? '$' + Math.round(c / 1e3) + 'k' : '$' + c
+function AuUtilCell({ d }) {
+  const u = d.au_utilization
+  const ref = useRef(null)
+  const [pos, setPos] = useState(null)
+  const show = useCallback(() => {
+    const el = ref.current; if (!el) return
+    const r = el.getBoundingClientRect()
+    const POP_H = 200, GAP = 9
+    const place = (r.top >= POP_H + GAP || r.top >= window.innerHeight - r.bottom) ? 'above' : 'below'
+    setPos({ left: Math.max(133, Math.min(window.innerWidth - 133, r.left + r.width / 2)), top: place === 'above' ? r.top - GAP : r.bottom + GAP, place })
+  }, [])
+  const hide = useCallback(() => setPos(null), [])
+  // Track C with no DoS match → "AU data unavailable" (we looked). Any other
+  // track → "—" (AU utilization is a Track C signal; not applicable here).
+  if (!u) return d.track === 'C'
+    ? <span className="exp-au na">AU data unavailable</span>
+    : <span className="exp-dash">—</span>
+  const isClass = u.grain === 'class'
+  const pop = pos && createPortal(
+    <span className={'exp-risk-pop ' + pos.place} style={{ left: pos.left + 'px', top: pos.top + 'px' }} onMouseEnter={show} onMouseLeave={hide}>
+      <span className="exp-risk-pop-grade"><span className="rd" style={{ width: 8, height: 8, borderRadius: '50%', background: isClass ? 'var(--amber)' : 'var(--accent)' }} />AU utilization · {isClass ? 'class-level' : 'substance-level'}</span>
+      <span className="exp-rp-row"><span className="k">ATC5</span><span className="v">{u.atc5}</span></span>
+      <span className="exp-rp-row"><span className="k">Scripts</span><span className="v mono">{u.scripts.toLocaleString()}</span></span>
+      <span className="exp-rp-row"><span className="k">Benefit cost</span><span className="v mono">{auFmt(u.cost)}</span></span>
+      <span className="exp-rp-basis">{u.basis} Raw AU PBS dispensing, not scaled to NZ.</span>
+    </span>,
+    document.body
+  )
+  return (
+    <span className={'exp-au' + (isClass ? ' cls' : '')} ref={ref} tabIndex={0}
+      onMouseEnter={show} onMouseLeave={hide} onFocus={show} onBlur={hide} onClick={(e) => e.stopPropagation()}>
+      <span className="exp-au-val">{auFmt(u.cost)}</span>
+      {isClass && <span className="exp-au-grain" title="Class-level sum — shared across the ATC class">∑ class</span>}
+      {pop}
+    </span>
+  )
+}
+
 /* -- column definitions -- */
 const COLS = [
   { key: 'chemical', label: 'Chemical', sticky: true, def: true,
@@ -223,6 +265,10 @@ const COLS = [
     val: (d) => (d.class_funded_count == null ? null : d.class_funded_count),
     cell: (d) => <span className="exp-num">{d.class_funded_count == null ? <span className="exp-dash">—</span> : d.class_funded_count}</span>,
     csv: (d) => (d.class_funded_count == null ? '' : d.class_funded_count) },
+  { key: 'au_util', label: 'AU utilization', num: true, def: false,
+    val: (d) => (d.au_utilization == null ? null : d.au_utilization.cost),
+    cell: (d) => <AuUtilCell d={d} />,
+    csv: (d) => (d.au_utilization == null ? 'AU data unavailable' : d.au_utilization.cost) },
   { key: 'ofiPending', label: 'OFI', def: true,
     val: (d) => (d.ofiPending ? 1 : 0),
     cell: (d) => d.ofiPending
@@ -234,14 +280,14 @@ const COL_BY_KEY = Object.fromEntries(COLS.map((c) => [c.key, c]))
 
 /* -- live data: gap-enriched joined to reference-pricing, adapted -- */
 function useEngine1Data() {
-  const [s, setS] = useState({ loading: true, error: false, items: [], updated: null })
+  const [s, setS] = useState({ loading: true, error: false, items: [], updated: null, auMeta: null })
   const [nonce, setNonce] = useState(0)
   useEffect(() => {
     let alive = true
     setS((x) => ({ ...x, loading: true, error: false }))
     Promise.all([getGapEnriched(), getReferencePricing()])
-      .then(([g, rp]) => { if (alive) setS({ loading: false, error: false, items: adaptGaps(g.gaps, rp.items), updated: g.cache_last_updated || null }) })
-      .catch(() => { if (alive) setS({ loading: false, error: true, items: [], updated: null }) })
+      .then(([g, rp]) => { if (alive) setS({ loading: false, error: false, items: adaptGaps(g.gaps, rp.items), updated: g.cache_last_updated || null, auMeta: g.au_utilization_meta || null }) })
+      .catch(() => { if (alive) setS({ loading: false, error: true, items: [], updated: null, auMeta: null }) })
     return () => { alive = false }
   }, [nonce])
   return [s, () => setNonce((n) => n + 1)]
@@ -272,7 +318,7 @@ function freshFilters(b) {
 
 /* -- main -- */
 export default function BdExplore({ onOpenDetail }) {
-  const [{ loading, error, items, updated }, retry] = useEngine1Data()
+  const [{ loading, error, items, updated, auMeta }, retry] = useEngine1Data()
 
   // data-driven bounds for the range filters (ignore null/NaN)
   const bounds = useMemo(() => {
@@ -528,6 +574,10 @@ export default function BdExplore({ onOpenDetail }) {
           class and how many NZ-funded competitors sit in it - that count is the basis of the grade, shown so you
           can judge it yourself. It sits beside the BD score, never inside it. Reference pricing is the only
           barrier tracked today; new columns slot into the picker as their data lands. {updated && <>As of {updated}.</>}
+          {auMeta && <><br /><b>AU utilization</b> (in the column picker) is <b>raw AU PBS dispensing</b> — benefit
+          cost &amp; scripts from the Date-of-Supply data ({auMeta.period}), <b>not scaled to NZ</b>. It gives Track C
+          local generics (no BD Score) a "where the money flows in AU" signal. Hover a value for its ATC grain —
+          a <i>class-level</i> figure is shared across the whole ATC class, not one drug. {auMeta.note}</>}
         </p>
       </div>
     </section>
