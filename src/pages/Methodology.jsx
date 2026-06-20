@@ -286,8 +286,8 @@ export default function Methodology() {
 
         <div className="mth-rule" />
 
-        {/* §4 - Honesty devices (in-product) */}
-        <section className="mth-section">
+        {/* §4 - Honesty devices (in-product) — Guide §3 links here */}
+        <section className="mth-section" id="honesty-devices" style={{ scrollMarginTop: '80px' }}>
           <Head
             eyebrow="Honesty devices · in the product"
             title="The caveats aren't in a footnote. They're in the interface."
