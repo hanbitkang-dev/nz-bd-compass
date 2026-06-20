@@ -51,45 +51,6 @@ const COMPARE = [
   },
 ]
 
-function ReduceLadder({ rows, cuts, tone }) {
-  const combined = []
-  rows.forEach((r, i) => {
-    combined.push({ type: 'row', ...r })
-    if (cuts[i]) combined.push({ type: 'cut', ...cuts[i] })
-  })
-  return (
-    <div className="cmp-redux">
-      {combined.map((item, i) =>
-        item.type === 'cut' ? (
-          <div key={i} className="cmp-redux-cut">
-            <span className="cmp-redux-cut-n">−{item.n}</span>
-            <span>{item.label}</span>
-          </div>
-        ) : (
-          <div key={i} className="cmp-redux-row">
-            <div className="cmp-redux-n">{item.n}</div>
-            <div className="cmp-redux-meta">
-              <div className="cmp-redux-label">{item.label}</div>
-              {item.sub && <div className="cmp-redux-sub">{item.sub}</div>}
-              <div className="cmp-redux-bar-wrap">
-                {item.tracks ? (
-                  <div className="cmp-redux-bar tracks" style={{ width: `${item.pct}%` }}>
-                    <div className="t-a" style={{ flex: item.tracks.a }} />
-                    <div className="t-b" style={{ flex: item.tracks.b }} />
-                    <div className="t-c" style={{ flex: item.tracks.c }} />
-                  </div>
-                ) : (
-                  <div className="cmp-redux-bar" style={{ width: `${item.pct}%` }} />
-                )}
-              </div>
-            </div>
-          </div>
-        )
-      )}
-    </div>
-  )
-}
-
 function EngineCard({ which, navigate }) {
   const il = which === 'il'
   const path = il ? '/in-licensing' : '/tender-clock'
@@ -114,21 +75,6 @@ function EngineCard({ which, navigate }) {
               <span className="cmp-engine-chip">197 local generics (Track C)</span>
             </div>
           </div>
-
-          <div className="cmp-engine-ladder">
-            <ReduceLadder
-              tone="il"
-              rows={[
-                { n: 523, label: 'Total AU gaps', sub: 'Medicines on the PBS, not on the PHARMAC Schedule', pct: 100 },
-                { n: 339, label: '3-track sorted', sub: 'A (130) · B (12) · C (197)', pct: 65,
-                  tracks: { a: 130, b: 12, c: 197 } },
-              ]}
-              cuts={[
-                { n: 184, label: 'extemp, device, no ATC code — named but not BD-classified' },
-                null,
-              ]}
-            />
-          </div>
         </>
       ) : (
         <>
@@ -142,22 +88,6 @@ function EngineCard({ which, navigate }) {
               <span className="cmp-engine-chip">2027 cohort · 58 targets</span>
               <span className="cmp-engine-chip gray">94% supplier-confirmed (2028)</span>
             </div>
-          </div>
-
-          <div className="cmp-engine-ladder">
-            <ReduceLadder
-              tone="tc"
-              rows={[
-                { n: 195, label: 'Sole-supply contracts', sub: 'PSS chemicals — one funded brand', pct: 100 },
-                { n: 139, label: 'After filter', sub: 'Small-molecule + complex · local brands removed', pct: 71 },
-                { n: 93,  label: 'White-space', sub: 'Competitor-held + opaque, all expiry years', pct: 48 },
-              ]}
-              cuts={[
-                { n: 56, label: 'vaccines, biologics, devices + ANZ-local brands' },
-                { n: 46, label: 'already held by an ANZ-local manufacturer' },
-                null,
-              ]}
-            />
           </div>
         </>
       )}
@@ -252,28 +182,14 @@ export default function Home() {
         </div>
 
         <div className="cmp-honesty-grid">
-          {/* Engine 1 honesty card */}
+          {/* Engine 1 honesty card — headline reduction only; full breakdown lives in Methodology */}
           <div className="cmp-hon-card il">
             <div className="cmp-hon-card-head">
               <div className="cmp-hon-card-ic">{IcHorizon}</div>
               <div>
                 <div className="cmp-hon-card-kicker">Engine 01 · In-Licensing</div>
-                <div className="cmp-hon-card-title">523 → 339 → 3 tracks</div>
+                <div className="cmp-hon-card-title">523 → 339 classified → 3 tracks</div>
               </div>
-            </div>
-            <div className="cmp-redux-sm">
-              <ReduceLadder
-                tone="il"
-                rows={[
-                  { n: 523, label: 'Total AU-funded gaps', pct: 100 },
-                  { n: 339, label: '3-track sorted', sub: 'A 130 · B 12 · C 197', pct: 65,
-                    tracks: { a: 130, b: 12, c: 197 } },
-                ]}
-                cuts={[
-                  { n: 184, label: 'extemp, devices, no ATC code' },
-                  null,
-                ]}
-              />
             </div>
             <p className="cmp-hon-note">
               Track C (197 local generics) carries no global revenue or patent data —
@@ -290,27 +206,16 @@ export default function Home() {
                 <div className="cmp-hon-card-title">195 → 139 → 93 white-space</div>
               </div>
             </div>
-            <div className="cmp-redux-sm">
-              <ReduceLadder
-                tone="tc"
-                rows={[
-                  { n: 195, label: 'Sole-supply contracts', pct: 100 },
-                  { n: 139, label: 'After filter', pct: 71 },
-                  { n: 93,  label: 'White-space', sub: 'Competitor + opaque, all years', pct: 48 },
-                ]}
-                cuts={[
-                  { n: 56, label: 'vaccines, biologics, devices + ANZ-local brands' },
-                  { n: 46, label: 'already held by ANZ-local manufacturer' },
-                  null,
-                ]}
-              />
-            </div>
             <p className="cmp-hon-note">
               94% of the 2028 cohort supplier-confirmed (32/34) via WS1 notifications.
               Opaque rows are counted as white-space and flagged — never silently excluded.
             </p>
           </div>
         </div>
+
+        <button className="cmp-honesty-link" onClick={() => navigate('/methodology#reduction-ladder')}>
+          How were these numbers derived? {IcArrow}
+        </button>
       </section>
     </div>
   )

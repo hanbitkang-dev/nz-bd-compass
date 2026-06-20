@@ -3,6 +3,7 @@ import { Routes, Route, NavLink, Link } from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import InLicensing from './pages/InLicensing.jsx'
 import TenderClockPage from './pages/TenderClockPage.jsx'
+import Methodology from './pages/Methodology.jsx'
 import './compass.css'
 
 function LogoMark() {
@@ -50,6 +51,10 @@ function Header({ dark, onToggleDark }) {
           </NavLink>
           <NavLink to="/tender-clock" className={({ isActive }) => `cmp-nav-link${isActive ? ' active' : ''}`}>
             Tender Clock
+          </NavLink>
+          {/* Guide nav slot intentionally left for CD's separate Guide work */}
+          <NavLink to="/methodology" className={({ isActive }) => `cmp-nav-link${isActive ? ' active' : ''}`}>
+            Methodology
           </NavLink>
         </nav>
 
@@ -104,6 +109,7 @@ export default function App() {
           <Route path="/"              element={<Home />} />
           <Route path="/in-licensing" element={<InLicensing />} />
           <Route path="/tender-clock" element={<TenderClockPage />} />
+          <Route path="/methodology"  element={<Methodology />} />
         </Routes>
       </main>
       <Footer />
