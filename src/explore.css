@@ -296,6 +296,16 @@ th.sorted .exp-th-arrow { opacity: 1; color: var(--exp-accent); }
 .theme-dark .exp-au-grain { color: var(--amber); }
 .exp-au.na { color: var(--text-mute); font-size: 11.5px; font-style: italic; cursor: default; }
 
+/* NZ Medsafe registration cell — 5 colour-coded buckets + hover popover */
+.exp-nzreg { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: help; }
+.exp-nzreg-dot { width: 7px; height: 7px; border-radius: 50%; flex: none; background: var(--text-mute); }
+.exp-nzreg.reg { color: var(--green); } .exp-nzreg.reg .exp-nzreg-dot, .exp-nzreg-dot.reg { background: var(--green); }
+.exp-nzreg.inact { color: var(--amber-strong); } .exp-nzreg.inact .exp-nzreg-dot, .exp-nzreg-dot.inact { background: var(--amber); }
+.exp-nzreg.none { color: var(--red); } .exp-nzreg.none .exp-nzreg-dot, .exp-nzreg-dot.none { background: var(--red); }
+.exp-nzreg.review { color: var(--text-dim); } .exp-nzreg.review .exp-nzreg-dot, .exp-nzreg-dot.review { background: var(--text-mute); }
+.exp-nzreg.unchecked { color: var(--text-mute); } .exp-nzreg.unchecked .exp-nzreg-dot, .exp-nzreg-dot.unchecked { background: var(--text-mute); opacity: .5; }
+.theme-dark .exp-nzreg.inact { color: var(--amber); }
+
 /* small status dot pills (ofiPending / hold / difficulty) */
 .exp-dot-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--text-dim); white-space: nowrap; }
 .exp-dot-pill .d { width: 7px; height: 7px; border-radius: 50%; }

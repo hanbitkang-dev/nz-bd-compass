@@ -213,6 +213,49 @@ function AuUtilCell({ d }) {
   )
 }
 
+/* -- NZ Medsafe registration cell (Engine 1; read-through of the STEP 3 snapshot).
+   5 buckets, colour-coded, with a hover popover carrying the site-defined legal
+   meaning + sponsors (display only). Mirrors the RiskCell portal pattern. -- */
+const NZREG = {
+  registered:          { label: 'Registered',            cls: 'reg',       def: 'Consent given — active s20 consent to market in NZ.' },
+  registered_inactive: { label: 'Registered (inactive)', cls: 'inact',     def: 'Approval lapsed / Not available — previously registered, currently inactive.' },
+  not_registered:      { label: 'Not registered',        cls: 'none',      def: 'No NZ registration found (INN + brand both checked).' },
+  review_pending:      { label: 'Review pending',        cls: 'review',    def: 'Status unclear — not auto-classified.' },
+  not_yet_checked:     { label: 'Not yet checked',       cls: 'unchecked', def: 'Outside the current Medsafe snapshot — not yet checked.' },
+}
+const NZREG_ORDER = { registered: 5, registered_inactive: 4, review_pending: 3, not_registered: 2, not_yet_checked: 1 }
+function NzRegCell({ d }) {
+  const r = d.nz_registration || { status_rollup: 'not_yet_checked' }
+  const meta = NZREG[r.status_rollup] || NZREG.not_yet_checked
+  const ref = useRef(null)
+  const [pos, setPos] = useState(null)
+  const show = useCallback(() => {
+    const el = ref.current; if (!el) return
+    const rect = el.getBoundingClientRect()
+    const POP_H = 190, GAP = 9
+    const place = (rect.top >= POP_H + GAP || rect.top >= window.innerHeight - rect.bottom) ? 'above' : 'below'
+    setPos({ left: Math.max(133, Math.min(window.innerWidth - 133, rect.left + rect.width / 2)), top: place === 'above' ? rect.top - GAP : rect.bottom + GAP, place })
+  }, [])
+  const hide = useCallback(() => setPos(null), [])
+  const pop = pos && createPortal(
+    <span className={'exp-risk-pop ' + pos.place} style={{ left: pos.left + 'px', top: pos.top + 'px' }} onMouseEnter={show} onMouseLeave={hide}>
+      <span className="exp-risk-pop-grade"><span className={'exp-nzreg-dot ' + meta.cls} />NZ registration · {meta.label}</span>
+      {r.statuses?.length > 0 && <span className="exp-rp-row"><span className="k">Medsafe status</span><span className="v">{r.statuses.join(', ')}</span></span>}
+      {r.sponsors?.length > 0 && <span className="exp-rp-row"><span className="k">Sponsor</span><span className="v">{r.sponsors.join(', ')}</span></span>}
+      {r.products_n != null && <span className="exp-rp-row"><span className="k">Products</span><span className="v mono">{r.products_n}</span></span>}
+      <span className="exp-rp-basis">{meta.def}</span>
+    </span>,
+    document.body
+  )
+  return (
+    <span className={'exp-nzreg ' + meta.cls} ref={ref} tabIndex={0}
+      onMouseEnter={show} onMouseLeave={hide} onFocus={show} onBlur={hide} onClick={(e) => e.stopPropagation()}>
+      <span className="exp-nzreg-dot" />{meta.label}
+      {pop}
+    </span>
+  )
+}
+
 /* -- column definitions -- */
 const COLS = [
   { key: 'chemical', label: 'Chemical', sticky: true, def: true,
@@ -269,6 +312,10 @@ const COLS = [
     val: (d) => (d.au_utilization == null ? null : d.au_utilization.cost),
     cell: (d) => <AuUtilCell d={d} />,
     csv: (d) => (d.au_utilization == null ? 'AU data unavailable' : d.au_utilization.cost) },
+  { key: 'nz_reg', label: 'NZ Registration', def: false,
+    val: (d) => NZREG_ORDER[d.nz_registration?.status_rollup] ?? 0,
+    cell: (d) => <NzRegCell d={d} />,
+    csv: (d) => d.nz_registration?.status_rollup || 'not_yet_checked' },
   { key: 'ofiPending', label: 'OFI', def: true,
     val: (d) => (d.ofiPending ? 1 : 0),
     cell: (d) => d.ofiPending
@@ -280,14 +327,14 @@ const COL_BY_KEY = Object.fromEntries(COLS.map((c) => [c.key, c]))
 
 /* -- live data: gap-enriched joined to reference-pricing, adapted -- */
 function useEngine1Data() {
-  const [s, setS] = useState({ loading: true, error: false, items: [], updated: null, auMeta: null })
+  const [s, setS] = useState({ loading: true, error: false, items: [], updated: null, auMeta: null, nzMeta: null })
   const [nonce, setNonce] = useState(0)
   useEffect(() => {
     let alive = true
     setS((x) => ({ ...x, loading: true, error: false }))
     Promise.all([getGapEnriched(), getReferencePricing()])
-      .then(([g, rp]) => { if (alive) setS({ loading: false, error: false, items: adaptGaps(g.gaps, rp.items), updated: g.cache_last_updated || null, auMeta: g.au_utilization_meta || null }) })
-      .catch(() => { if (alive) setS({ loading: false, error: true, items: [], updated: null, auMeta: null }) })
+      .then(([g, rp]) => { if (alive) setS({ loading: false, error: false, items: adaptGaps(g.gaps, rp.items), updated: g.cache_last_updated || null, auMeta: g.au_utilization_meta || null, nzMeta: g.nz_registration_meta || null }) })
+      .catch(() => { if (alive) setS({ loading: false, error: true, items: [], updated: null, auMeta: null, nzMeta: null }) })
     return () => { alive = false }
   }, [nonce])
   return [s, () => setNonce((n) => n + 1)]
@@ -318,7 +365,7 @@ function freshFilters(b) {
 
 /* -- main -- */
 export default function BdExplore({ onOpenDetail }) {
-  const [{ loading, error, items, updated, auMeta }, retry] = useEngine1Data()
+  const [{ loading, error, items, updated, auMeta, nzMeta }, retry] = useEngine1Data()
 
   // data-driven bounds for the range filters (ignore null/NaN)
   const bounds = useMemo(() => {
@@ -578,6 +625,10 @@ export default function BdExplore({ onOpenDetail }) {
           cost &amp; scripts from the Date-of-Supply data ({auMeta.period}), <b>not scaled to NZ</b>. It gives Track C
           local generics (no BD Score) a "where the money flows in AU" signal. Hover a value for its ATC grain —
           a <i>class-level</i> figure is shared across the whole ATC class, not one drug. {auMeta.note}</>}
+          {nzMeta && <><br /><b>NZ Registration</b> (in the column picker) is a <b>Medsafe snapshot</b> (offline
+          precompute, as of {nzMeta.as_of}) over the {nzMeta.total} matched + Track C medicines — <b>not live</b>.
+          Hover a value for its meaning; <i>not registered</i> means INN + brand both returned nothing, and
+          medicines outside the snapshot read <i>not yet checked</i> (never assumed unregistered).</>}
         </p>
       </div>
     </section>

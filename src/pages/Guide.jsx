@@ -197,6 +197,12 @@ export default function Guide() {
               </div>
             </article>
           </div>
+          <p className="mth-sub" style={{ marginTop: 18 }}>
+            The <b>NZ Registration</b> column reads the same way: a coloured dot per medicine —
+            <b> registered</b> (active consent), <b>registered (inactive)</b> (lapsed / not available),
+            <b> not registered</b> (INN + brand both checked), or <b>not yet checked</b> (outside the snapshot).
+            Hover for the Medsafe meaning + sponsor. It's a dated snapshot, not a live lookup.
+          </p>
           <div className="gd-readlink">
             <span>Want the calculation behind a grade, not just how to read it?</span>
             <button className="gd-readlink-btn" onClick={() => navigate('/methodology#honesty-devices')}>{I.book}See it in Methodology{I.arrow}</button>
