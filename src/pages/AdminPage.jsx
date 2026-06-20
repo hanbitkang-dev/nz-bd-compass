@@ -92,6 +92,31 @@ export default function AdminPage() {
     setMsg(null)
   }
 
+  // Force the backend to re-pull the pharma-intel cross-ref cache now (boot TTL
+  // is 7d, scheduler weekly). Same admin password; the server-side <50% safety
+  // guard still applies. Refreshes the cache-status line on success.
+  async function refreshPiCache() {
+    setMsg(null); setBusy(true)
+    try {
+      const r = await fetch(`${API_BASE}/api/cross-ref/refresh-pi`, {
+        method: 'POST',
+        headers: { 'x-admin-password': pw, 'Content-Type': 'application/json' },
+      })
+      const data = await r.json().catch(() => ({}))
+      if (r.ok) {
+        const txt = data.guard_held
+          ? `Safety guard held — pi returned too few drugs, kept existing ${data.after_count}.`
+          : data.refresh_failed
+            ? `pi fetch failed — kept existing ${data.after_count} drugs.`
+            : `pi cache refreshed: ${data.before_count} → ${data.after_count} drugs (${data.last_updated}).`
+        setMsg({ type: data.guard_held || data.refresh_failed ? 'err' : 'ok', text: txt })
+        // re-pull the cache-status + match line
+        fetch(`${API_BASE}/api/cross-ref/stats`).then(s => s.ok ? s.json() : null).then(s => s && setStats(s)).catch(() => {})
+      } else setMsg({ type: 'err', text: data.error || `Refresh failed (${r.status})` })
+    } catch { setMsg({ type: 'err', text: 'Network error' }) }
+    finally { setBusy(false) }
+  }
+
   // ── password gate ──
   if (!authed) {
     return (
@@ -168,6 +193,9 @@ export default function AdminPage() {
           </button>
           <button onClick={resetDefault} style={{ padding: '10px 18px', borderRadius: 8, border: '1px solid var(--border-strong)', background: 'var(--surface)', color: 'var(--text)', fontWeight: 600, fontSize: 13.5, cursor: 'pointer' }}>
             Reset to Default
+          </button>
+          <button onClick={refreshPiCache} disabled={busy} title="Re-pull the pharma-intel cross-reference cache now (7-day TTL otherwise). Safety guard still applies." style={{ padding: '10px 18px', borderRadius: 8, border: '1px solid var(--border-strong)', background: 'var(--surface)', color: 'var(--text)', fontWeight: 600, fontSize: 13.5, cursor: busy ? 'default' : 'pointer', opacity: busy ? 0.6 : 1 }}>
+            {busy ? 'Working…' : 'Refresh pi cache now'}
           </button>
           {msg && <span style={{ fontSize: 12.5, fontWeight: 600, color: msg.type === 'ok' ? 'var(--green)' : 'var(--red)' }}>{msg.text}</span>}
         </div>
