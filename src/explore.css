@@ -304,6 +304,7 @@ th.sorted .exp-th-arrow { opacity: 1; color: var(--exp-accent); }
 .exp-nzreg.none { color: var(--red); } .exp-nzreg.none .exp-nzreg-dot, .exp-nzreg-dot.none { background: var(--red); }
 .exp-nzreg.review { color: var(--text-dim); } .exp-nzreg.review .exp-nzreg-dot, .exp-nzreg-dot.review { background: var(--text-mute); }
 .exp-nzreg.unchecked { color: var(--text-mute); } .exp-nzreg.unchecked .exp-nzreg-dot, .exp-nzreg-dot.unchecked { background: var(--text-mute); opacity: .5; }
+.exp-nzreg.na { color: var(--text-mute); opacity: .7; } .exp-nzreg.na .exp-nzreg-dot, .exp-nzreg-dot.na { background: var(--border-strong); }
 .theme-dark .exp-nzreg.inact { color: var(--amber); }
 
 /* small status dot pills (ofiPending / hold / difficulty) */

@@ -320,8 +320,9 @@ export default function Methodology() {
               <h3 className="mth-device-ttl">Hover a risk grade, see why it's that grade.</h3>
               <p className="mth-device-desc">
                 Reference-pricing risk is a directional flag, not a price. So the grade carries its own evidence:
-                hovering reveals the ATC class it was read from and how many products in that class PHARMAC
-                already funds — the actual basis for the call.
+                hovering reveals the ATC class it was read from, how many products in that class PHARMAC already
+                funds, and the <b>NZ funded list-price range</b> of that class — the actual basis for the call.
+                The price is the published list/scheduled price per pack, <b>not net of confidential rebates</b>.
               </p>
               <div className="mth-device-stage">
                 <div className="mth-rp-anchor">
@@ -330,10 +331,10 @@ export default function Methodology() {
                 </div>
                 <div className="mth-rp-pop">
                   <div className="mth-rp-pop-h">Why this grade</div>
-                  <div className="mth-rp-line"><span className="k">ATC L3</span><span className="v">C09A</span></div>
                   <div className="mth-rp-line"><span className="k">ATC L4</span><span className="v">C09AA</span></div>
                   <div className="mth-rp-line"><span className="k">class_funded_count</span><span className="v">11</span></div>
-                  <div className="mth-rp-because">11 funded substitutes in-class — strong reference anchor — <b>high</b> pricing-pressure risk.</div>
+                  <div className="mth-rp-line"><span className="k">NZ funded price</span><span className="v">$8–$42 /pack</span></div>
+                  <div className="mth-rp-because">11 funded substitutes in-class, already funded at $8–$42 — strong reference anchor — <b>high</b> pricing-pressure risk. List price, not net of rebates.</div>
                 </div>
                 <div className="mth-stage-cap">Illustrative — the live popover on a grade.</div>
               </div>
@@ -379,7 +380,7 @@ export default function Methodology() {
           <div className="mth-limits">
             {[
               { t: 'No NZ market size or value estimate', b: 'The compass sizes opportunities by funding gaps and supply clocks, not by dollars. There is no NZ revenue or volume model behind any figure.', why: 'out of scope' },
-              { t: 'Price & margin are directional flags only', b: "Reference-pricing risk is graded high / medium / low — there is no actual $ figure. PHARMAC's real negotiated prices are commercial-in-confidence and permanently undisclosed, so no honest price model is possible.", why: 'commercial-in-confidence', locked: true },
+              { t: 'Net price is undisclosed (list price only)', b: "The reference-pricing popover now shows the NZ funded list/scheduled price range of the ATC class, but PHARMAC's real net price after confidential rebates is commercial-in-confidence and permanently undisclosed. The risk grade stays directional (high/medium/low) — list price ≠ what PHARMAC actually pays.", why: 'commercial-in-confidence', locked: true },
               { t: 'Medsafe registration — snapshot, not live', b: "The Explore “NZ Registration” column distinguishes registered (Consent given) / registered-inactive (lapsed or not available) / not-registered (INN + brand both checked) / review-pending. It covers the 342 matched + Track C medicines as an offline precompute snapshot (as of 2026-06-20), not a live query — medicines outside it read “not yet checked”, never assumed unregistered.", why: 'snapshot, Engine 1' },
               { t: 'Track C (197) has no BD Score', b: 'Unmatched local generics are classified from ATC and dosage form alone, with no global revenue or patent data — so they can\'t be ranked, only listed.', why: 'no data to rank' },
               { t: 'OFI wait time is a snapshot', b: "The Options-for-Investment queue position is current-state only. There is no history, so you can't see whether an item is moving up the queue or stalling.", why: 'no time series' },

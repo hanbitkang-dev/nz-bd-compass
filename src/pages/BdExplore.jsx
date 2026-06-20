@@ -41,6 +41,9 @@ const RISK_BASIS = {
   low: 'Few or no NZ-funded competitors in the ATC L4 class - limited reference-pricing exposure.',
   unknown: 'No ATC class resolved for this medicine - reference-pricing exposure not estimated.',
 }
+// NZ funded list-price range of the ATC class (v4 B). per pack · across N funded presentations.
+const fmtMoney = (v) => '$' + Number(v).toLocaleString(undefined, { maximumFractionDigits: 2 })
+const fmtPriceRange = (r) => (r.min === r.max ? `${fmtMoney(r.min)}` : `${fmtMoney(r.min)}–${fmtMoney(r.max)}`) + ` /pack · ${r.n}`
 
 /* -- real -> table shape adapter (keeps real fields for BdDetailPanel) -- */
 const yearOf = (pe) => { const m = String(pe ?? '').match(/20\d{2}/); return m ? +m[0] : null }
@@ -66,6 +69,7 @@ function adaptGaps(gaps, rpItems) {
       atc_l3: r?.atc_l3 || '',
       atc_l4: r?.atc_l4 || '',
       class_funded_count: r?.class_funded_count ?? null,
+      class_price_range: r?.price_range || null,
       au_restriction: g.au_restriction || '-',
       ofiPending: !!g.ofiPending,
       ofiNote: null,
@@ -155,7 +159,8 @@ function RiskCell({ d }) {
       <span className="exp-rp-row"><span className="k">ATC L3</span><span className="v">{d.atc_l3 || '-'}</span></span>
       <span className="exp-rp-row"><span className="k">ATC L4</span><span className="v">{d.atc_l4 || '-'}</span></span>
       <span className="exp-rp-row"><span className="k">Funded in class</span><span className="v mono">{d.class_funded_count == null ? '-' : d.class_funded_count + ' NZ'}</span></span>
-      <span className="exp-rp-basis">{RISK_BASIS[lvl]} Estimate only - the size of any funded price cut can't be predicted.</span>
+      {d.class_price_range && <span className="exp-rp-row"><span className="k">NZ funded price</span><span className="v mono">{fmtPriceRange(d.class_price_range)}</span></span>}
+      <span className="exp-rp-basis">{RISK_BASIS[lvl]} Estimate only - the size of any funded price cut can't be predicted.{d.class_price_range && ' Price is the list/scheduled price per pack, not net of confidential rebates.'}</span>
     </span>,
     document.body
   )
@@ -221,9 +226,10 @@ const NZREG = {
   registered_inactive: { label: 'Registered (inactive)', cls: 'inact',     def: 'Approval lapsed / Not available — previously registered, currently inactive.' },
   not_registered:      { label: 'Not registered',        cls: 'none',      def: 'No NZ registration found (INN + brand both checked).' },
   review_pending:      { label: 'Review pending',        cls: 'review',    def: 'Status unclear — not auto-classified.' },
-  not_yet_checked:     { label: 'Not yet checked',       cls: 'unchecked', def: 'Outside the current Medsafe snapshot — not yet checked.' },
+  not_yet_checked:     { label: 'Not yet checked',       cls: 'unchecked', def: 'A medicine gap added after the last snapshot — awaiting the next precompute (transient).' },
+  not_eligible:        { label: 'N/A',                   cls: 'na',        def: 'Not a Medsafe-eligible medicine (e.g. dressing, extemporaneous, device) — permanently out of scope.' },
 }
-const NZREG_ORDER = { registered: 5, registered_inactive: 4, review_pending: 3, not_registered: 2, not_yet_checked: 1 }
+const NZREG_ORDER = { registered: 6, registered_inactive: 5, review_pending: 4, not_registered: 3, not_yet_checked: 2, not_eligible: 1 }
 function NzRegCell({ d }) {
   const r = d.nz_registration || { status_rollup: 'not_yet_checked' }
   const meta = NZREG[r.status_rollup] || NZREG.not_yet_checked
