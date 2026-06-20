@@ -5,6 +5,7 @@ import InLicensing from './pages/InLicensing.jsx'
 import TenderClockPage from './pages/TenderClockPage.jsx'
 import Guide from './pages/Guide.jsx'
 import Methodology from './pages/Methodology.jsx'
+import AdminPage from './pages/AdminPage.jsx'
 import './compass.css'
 
 function LogoMark() {
@@ -114,6 +115,8 @@ export default function App() {
           <Route path="/tender-clock" element={<TenderClockPage />} />
           <Route path="/guide"        element={<Guide />} />
           <Route path="/methodology"  element={<Methodology />} />
+          {/* Unlinked internal tool — direct URL only, intentionally absent from nav */}
+          <Route path="/admin"         element={<AdminPage />} />
         </Routes>
       </main>
       <Footer />
