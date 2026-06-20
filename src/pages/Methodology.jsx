@@ -267,6 +267,19 @@ export default function Methodology() {
               <div className="cmp-redux-row end"><span className="cmp-redux-n mono">8</span><span className="cmp-redux-bar tc" style={{ width: '9%' }} /><span className="cmp-redux-l">white-space · <b>6 competitor-held + 2 opaque</b></span></div>
             </div>
 
+            {/* All-years product-type & manufacturability filter — the 195 → 139 step,
+                broken out in the same Σ-checkable style as Engine 1's decomposition. */}
+            <div className="mth-axes-eq" style={{ marginTop: 20 }}>
+              <div className="mth-eq">
+                <span className="mth-eq-math">20 + 36 <span className="ok">= 56</span></span>
+                <span className="mth-eq-cap">filtered out · vaccines / biologics / devices (20) + non-manufacturable / off-portfolio (36)</span>
+              </div>
+              <div className="mth-eq">
+                <span className="mth-eq-math">195 − 56 <span className="ok">= 139</span></span>
+                <span className="mth-eq-cap">all-years manufacturable sole-supply — the pool the 2028 cohort above is drawn from</span>
+              </div>
+            </div>
+
             <div className="mth-cov">
               <div className="mth-cov-row">
                 <span className="mth-cov-lab">2028 cohort coverage</span>
