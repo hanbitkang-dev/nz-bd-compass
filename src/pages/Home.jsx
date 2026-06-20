@@ -197,18 +197,20 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Engine 2 honesty card */}
+          {/* Engine 2 honesty card — 2028 cohort, the actionable window. The all-years
+              139 → 93 @ 52% reduction is kept as secondary context in Methodology. */}
           <div className="cmp-hon-card tc">
             <div className="cmp-hon-card-head">
               <div className="cmp-hon-card-ic">{IcClock}</div>
               <div>
-                <div className="cmp-hon-card-kicker">Engine 02 · Tender Clock</div>
-                <div className="cmp-hon-card-title">195 → 139 → 93 white-space</div>
+                <div className="cmp-hon-card-kicker">Engine 02 · Tender Clock · 2028 cohort</div>
+                <div className="cmp-hon-card-title">195 → 46 → 34 → 8 white-space</div>
               </div>
             </div>
             <p className="cmp-hon-note">
-              94% of the 2028 cohort supplier-confirmed (32/34) via WS1 notifications.
-              Opaque rows are counted as white-space and flagged — never silently excluded.
+              The 2028 cohort is the only window with enough runway to start a new dossier now: 8 white-space
+              slots (6 competitor-held + 2 opaque) at 94% supplier coverage (32/34). Opaque rows are counted as
+              white-space and flagged — never silently excluded.
             </p>
           </div>
         </div>
