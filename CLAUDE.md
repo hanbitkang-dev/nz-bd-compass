@@ -107,6 +107,16 @@ popover (reuses the RiskCell portal pattern). **78% coverage is a floor**; the
 12-month upgrade is impossible for memory reasons — details + the confirmed Engine 2
 number system live in **pharmac-tracker CLAUDE.md** (don't duplicate the figures here).
 
+## Engine 2 — confirmed UI labels (hold_status 4 / cohort 3)
+
+BdExplore filter/label vocabulary (values come from the pt API; do not invent new ones):
+- **hold_status (4)**: `White-space` · `Competitor-held` · `Opaque` · `Local`
+  (CSS classes `.exp-hold.{whitespace|competitor|opaque|local}` / guide branch pills).
+  The 139-target hold split itself (white-space 93 = competitor 26 + opaque 67, local 46)
+  is pt's number system — figures live there, not here.
+- **cohort (3)** = exclusivity-end year: `2026` · `2027` · `2028` (default `2028`;
+  `COHORT_MODE` toggle). 139 by cohort = 47 / 58 / 34.
+
 ---
 
 ## Conventions
